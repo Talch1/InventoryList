@@ -15,5 +15,6 @@ import com.talch.inventoryList.beans.Inventory;
 @Repository
 public interface InventoryRepo extends JpaRepository<Inventory, Long> {
 
+
 	
 }

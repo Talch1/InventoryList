@@ -75,15 +75,23 @@ public class InventoryService {
 
 		inventoryList.add(new Inventory(1, "Pen", 820, 999522455));
 		detailsMap.put((long) 1, "This pen is made in USA,color black");
+		depositeMap.put((long) 1, 0);
+		withdrawalMap.put((long) 1, 0);
 
 		inventoryList.add(new Inventory(2, "Pencil", 530, 999522896));
 		detailsMap.put((long) 2, "This pencil is made in Chine,color red");
+		depositeMap.put((long) 2, 0);
+		withdrawalMap.put((long) 2, 0);
 
 		inventoryList.add(new Inventory(3, "Eraser", 1290, 999522488));
 		detailsMap.put((long) 3, "This eraser is made in Chine,it is good to pen and pencil");
+		depositeMap.put((long) 3, 0);
+		withdrawalMap.put((long) 3, 0);
 
 		inventoryList.add(new Inventory(4, "Notebook", 400, 999522935));
-		detailsMap.put((long) 3, "This notebook is made in Chine,it is math notebook");
+		detailsMap.put((long) 4, "This notebook is made in Chine,it is math notebook");
+		depositeMap.put((long) 4, 0);
+		withdrawalMap.put((long) 4, 0);
 
 		repo.saveAll(inventoryList);
 	}
@@ -100,14 +108,37 @@ public class InventoryService {
 		return this.withdrawalMap.get(id);
 	}
 
-	public Inventory addItem(Inventory item, String details) {
+	public Inventory takeItem(Long id) {
+		Inventory inventory = repo.getOne(id);
+		inventory.setAmount(inventory.getAmount() - 1);
+		repo.save(inventory);
+		withdrawalMap.replace(id, withdrawalMap.get(id) + 1);
+		return inventory;
+	}
+
+	public Inventory addItem(Long id) {
+		Inventory inventory = repo.getOne(id);
+		inventory.setAmount(inventory.getAmount() + 1);
+		repo.deleteById(id);
+		repo.save(inventory);
+		depositeMap.replace(id, (depositeMap.get(id)) + 1);
+		return inventory;
+	}
+
+	public Inventory addNewItemToList(Inventory item, String details) {
 		detailsMap.put(item.getId(), details);
-		repo.save(item);	
-		depositeMap.replace(item.getId(), depositeMap.get(item.getId()+1));
+		repo.save(item);
+		depositeMap.put(item.getId(), 0);
+		withdrawalMap.put(item.getId(), 0);
 		return item;
 	}
+
 	public Optional<Inventory> getItem(long id) {
 		return repo.findById(id);
+	}
+
+	public void deleteItem(long id) {
+		repo.deleteById(id);
 	}
 
 	@Override
