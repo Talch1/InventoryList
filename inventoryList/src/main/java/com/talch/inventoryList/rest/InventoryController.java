@@ -3,6 +3,7 @@ package com.talch.inventoryList.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +20,10 @@ import com.talch.inventoryList.service.InventoryService;
  * @author Talch
  *
  */
-
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 @RequestMapping("/list")
+
 public class InventoryController {
 
 	@Autowired
@@ -36,7 +38,7 @@ public class InventoryController {
 			return new ResponseEntity<String>("This id is not exist", HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
 	// http://localhost:8080/list/deposite/{id}
 	@GetMapping(value = "/deposite/{id}")
 	public ResponseEntity<?> deposite(@PathVariable long id) {
@@ -57,9 +59,19 @@ public class InventoryController {
 		}
 	}
 
-	// http://localhost:8080/list/add/{id}
+	// http://localhost:8080/list/take/{id}
+	@GetMapping(value = "/take/{id}")
+	public ResponseEntity<?> take(@PathVariable long id) {
+		if (service.getWithdrawalMap().containsKey(id)) {
+			service.takeItem(id);
+			return ResponseEntity.status(HttpStatus.OK).body("Amount " + service.getItem(id).get().getAmount());
+		} else {
+			return new ResponseEntity<String>("This id is not exist", HttpStatus.BAD_REQUEST);
+		}
+	}
+ // http://localhost:8080/list/add/{id}
 	@GetMapping(value = "/add/{id}")
-	public ResponseEntity<?> addItem(@PathVariable long id) {
+	public ResponseEntity<?> add(@PathVariable long id) {
 		if (service.getWithdrawalMap().containsKey(id)) {
 			service.addItem(id);
 			return ResponseEntity.status(HttpStatus.OK).body("Amount " + service.getItem(id).get().getAmount());
@@ -67,9 +79,9 @@ public class InventoryController {
 			return new ResponseEntity<String>("This id is not exist", HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
 	// http://localhost:8080/list/delete/{id}
-	@DeleteMapping(value = "/deleteItem/{id}")
+	@DeleteMapping(value = "/delete/{id}")
 	public ResponseEntity<?> deleteItem(@PathVariable long id) {
 		if (((service.getItem(id)) != null)) {
 			service.deleteItem(id);
@@ -94,7 +106,7 @@ public class InventoryController {
 
 	// http://localhost:8080/list/getItem/{id}
 	@GetMapping(value = "/getItem/{id}")
-	public ResponseEntity<?> add(@PathVariable long id) {
+	public ResponseEntity<?> get(@PathVariable long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(service.getItem(id));
 	}
 

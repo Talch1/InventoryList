@@ -26,6 +26,8 @@ public class InventoryListApplication {
 		ConfigurableApplicationContext ctx = SpringApplication.run(InventoryListApplication.class, args);
 		System.out.println("start");
 
+		
+		
 		class SwaggerConfig {
 			@Bean
 			public Docket api() {

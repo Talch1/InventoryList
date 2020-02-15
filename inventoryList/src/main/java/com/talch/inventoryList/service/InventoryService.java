@@ -119,7 +119,6 @@ public class InventoryService {
 	public Inventory addItem(Long id) {
 		Inventory inventory = repo.getOne(id);
 		inventory.setAmount(inventory.getAmount() + 1);
-		repo.deleteById(id);
 		repo.save(inventory);
 		depositeMap.replace(id, (depositeMap.get(id)) + 1);
 		return inventory;
